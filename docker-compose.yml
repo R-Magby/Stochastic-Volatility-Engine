@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  mc-simulator:
+    build: .
+    container_name: mc_heston_bsm
+    volumes:
+      # Monta el directorio local en el contenedor para ver resultados en tiempo real
+      - .:/app
+    # Mantiene el contenedor activo si quieres ingresar con 'docker exec'
+    # command: ["tail", "-f", "/dev/null"]
