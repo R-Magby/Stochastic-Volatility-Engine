@@ -51,7 +51,7 @@ Aplicando el lema de Itô, la solución exacta en pasos discretos de tamaño
 $\Delta t = 1/252$ es:
 
 $$
-S_{t+\Delta t} = S_t \cdot \exp\!\left[\left(\mu - \frac{\sigma^2}{2}\right)\Delta t + \sigma \sqrt{\Delta t}\, Z\right], \quad Z \sim \mathcal{N}(0,1)
+S_{t+\Delta t} = S_t \cdot \exp\left[\left(\mu - \frac{\sigma^2}{2}\right)\Delta t + \sigma \sqrt{\Delta t}\, Z\right], \quad Z \sim \mathcal{N}(0,1)
 $$
 
 ### Métricas de riesgo calculadas
@@ -131,21 +131,6 @@ docker-compose down
 
 ---
 
-## 📊 Outputs esperados (consola)
-
-```
-Dias pasados: 3488
-Precio actual: 82755.0
-Volatilidad anual: 0.0267
-Riesgo anual: 0.0007
-
-Precio inicial:                 $82755.00
-Precio medio final:             $82995.25
-VaR 95%:                        -5.42%
-CVaR 95% (Expected Shortfall):  -6.58%
-Probabilidad de pérdida:        46.4%
-Probabilidad de +20%:           0.0%
-```
 
 ### Reporte Visual del Activo
 > Serie histórica (train/test) y distribución de precios del activo.
