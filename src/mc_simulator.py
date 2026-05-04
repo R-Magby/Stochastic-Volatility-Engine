@@ -92,6 +92,7 @@ class MonteCarloSimulator:
 
         axl[0].set_title('Prediccion vs Realidad')
         axl[0].set_xlabel("Dias")
+        axl[0].tick_params(axis='x', rotation=45)
         axl[0].set_ylabel("USD")
         axl[0].legend()
 
