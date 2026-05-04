@@ -44,18 +44,16 @@ class BSMmodel(MonteCarloSimulator):
     """
     def __init__(
         self,
-        precio_inicial: float,
-        mu: float,
-        sigma: float,
+        data_training: np.ndarray,
+        data_test: np.ndarray,
         N_casos_posibles: int = 100,
         dias_de_simulacion: int = 31,
         dias_de_trending: int = 252,
         optimize: str = None
     ):
         super().__init__(
-            precio_inicial,
-            mu,
-            sigma,
+            data_training,
+            data_test,
             N_casos_posibles,
             dias_de_simulacion,
             dias_de_trending,
@@ -67,7 +65,8 @@ class BSMmodel(MonteCarloSimulator):
             self.drift = self.mu - 0.5 * self.sigma ** 2
 
             self.S_t = np.ones((N_casos_posibles, dias_de_simulacion))
-            self.S_t[:, 0] = precio_inicial
+            self.S_t[:, 0] = self.precio_inicial
+
 
             if self.optimize == "For":
                 logger.info("Estrategia: ciclo For")
@@ -100,7 +99,6 @@ class BSMmodel(MonteCarloSimulator):
             "BSMmodel.simulate() | N=%d | T=%d | optimize=%s",
             self.N_casos_posibles, self.dias_de_simulacion, self.optimize,
         )
-
 
         if self.optimize == "For":
             for i in range(1, self.dias_de_simulacion):
@@ -141,9 +139,8 @@ class HestonModel(MonteCarloSimulator):
 
     def __init__(
         self,
-        precio_inicial: float,
-        mu: float,
-        sigma: float,
+        data_training: np.ndarray,
+        data_test: np.ndarray,
         N_casos_posibles: int = 100,
         dias_de_simulacion: int = 31,
         dias_de_trending: int = 252,
@@ -154,9 +151,8 @@ class HestonModel(MonteCarloSimulator):
         optimize: str = None,
     ):
         super().__init__(
-            precio_inicial,
-            mu,
-            sigma,
+            data_training,
+            data_test,
             N_casos_posibles,
             dias_de_simulacion,
             dias_de_trending,
@@ -166,7 +162,7 @@ class HestonModel(MonteCarloSimulator):
             self.rho = rho
             self.kappa = kappa
             self.theta = theta
-            self.v0 = sigma ** 2 if v0 is None else v0
+            self.v0 = self.sigma ** 2 if v0 is None else v0
             self.dt = 1 / self.dias_de_trending
 
             if self.optimize == "For":

@@ -51,19 +51,28 @@ def main() -> None:
     logger.info("Configurando simulación Monte Carlo (BSM)...")
     np.random.seed(RANDOM_SEED)
     logger.debug("Semilla aleatoria fijada: %d", RANDOM_SEED)
-
-    n_dias = int(datos.days / 8)
+    
+    #busday excluye los fines de semana
+    n_dias = np.busday_count(datos.test.index[0].date(), datos.test.index[-1].date())
+    try:
+        if n_dias ==datos.test.shape[0]:
+            pass
+        else:
+            n_dias = datos.test.shape[0]
+            logger.warning("El número de días no coincide con el número de días de test. Se utilizará el número de días de test. Es necesario el calendario financiero para obtener el número exacto de días.")
+    except ValueError as e:
+        logger.error("Error al procesar el calendario financiero: %s", e, exc_info=True)
+        raise
 
     parametros = f"ticker={TICKER}, precio_inicial={datos.precio_inicial}, mu={datos.mu}, sigma={datos.sigma}, n_simulaciones={N_SIMULACIONES}, dias={n_dias}"
-    log_parametros_simulacion(logger=logger,parameter=parametros)
+    log_parametros_simulacion(logger=logger, parameter=parametros)
 
     inicio = time.time()
 
     try:
         simulation = BSMmodel(
-            precio_inicial=datos.precio_inicial,
-            mu=datos.mu,
-            sigma=datos.sigma,
+            data_training=datos.train,
+            data_test=datos.test,
             N_casos_posibles=N_SIMULACIONES,
             dias_de_simulacion=n_dias,
             optimize="NumpyVectorization"
@@ -84,7 +93,7 @@ def main() -> None:
     try:
         simulation.reporte()
         simulation.informe_visual()
-
+        
         # Registrar métricas de riesgo en el log
         precios_finales = datos_simulados[:, -1]
         retornos = (precios_finales - datos.precio_inicial) / datos.precio_inicial

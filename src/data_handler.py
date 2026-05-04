@@ -50,7 +50,7 @@ class manipulate_data:
         self.sigma = self.crecimiento.std()
         self.precio_inicial = activos["Close"].values[-1][0]
 
-        self.days = np.abs((self.activos.index[0] - self.activos.index[-1]).days)
+        self.days = int(np.abs((self.activos.index[0] - self.activos.index[-1]).days))
 
         self.dia_de_corte = None
         self.test = None
@@ -64,7 +64,7 @@ class manipulate_data:
         Output:
             None (imprime por consola)
         """
-        print("Dias pasados:", self.days)
+        print("Dias totales disponibles:", self.days)
         print("Precio actual:", self.precio_inicial)
         print("Volatilidad anual:", self.sigma)
         print("Riesgo anual:", self.mu)
