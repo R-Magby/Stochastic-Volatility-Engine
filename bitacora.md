@@ -35,13 +35,11 @@ Version 4
 5) Benchmark en el reporte
 
 version 5
-1) _logging si olvido ejecutar la simulation simulate()
-2) _agregar en el historial de reportessi cumple la condiciond e faller
-3) _speedup
+1) Multiprocessing en Heston y BSM
+2) speedup
+3) Más ajustes !!!
 
-
-_Comprobar las versiones del requirements.txt
-4) _Multiporcessing en Heston 
-5) _Mejoras en la documentacion
-6) _Mejoras en la implementacion del logger
-7) _Actualizacion de main.py
+Tareas:
+1) _Comprobar las versiones del requirements.txt
+2) _Mejoras en la documentacion
+3) _Mejoras en la implementacion del logger
