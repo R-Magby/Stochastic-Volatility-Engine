@@ -116,3 +116,4 @@ class manipulate_data:
         fig.suptitle("Reporte Visual del Activo")
         plt.savefig("Reporte Visual del Activo.png")
         #plt.show()
+        plt.close()

@@ -41,6 +41,7 @@ class MonteCarloSimulator:
 
         self.data_training = data_training
         self.data_test = data_test
+        self.rng = np.random.default_rng(seed=42)
 
         self.crecimiento =  np.log((self.data_training / self.data_training.shift(1)).dropna()).values
 
@@ -91,7 +92,7 @@ class MonteCarloSimulator:
 
         #promedio de trayectorias
         axl[0].fill_between(
-            range(self.S_t.shape[1]),
+            self.data_test.reset_index().Date,
             np.percentile(self.S_t, 5, axis=0),
             np.percentile(self.S_t, 95, axis=0),
             alpha=0.15,
@@ -99,7 +100,7 @@ class MonteCarloSimulator:
             label='IC 90%',
         )
         axl[0].fill_between(
-            range(self.S_t.shape[1]),
+            self.data_test.reset_index().Date,
             p25,
             p75,
             alpha=0.25,
@@ -107,13 +108,13 @@ class MonteCarloSimulator:
             label='IC 50%',
         )
 
-        axl[0].plot([self.data_test.iloc[252].index.date(),self.data_test.iloc[252].index.date()], [0,self.data_test.max() * 1.5],"k--", label="Precio actual",alpha=0.7, linewidth=0.8)
+        axl[0].plot([self.data_test.index[252].date(),self.data_test.index[252].date()], [0,self.data_test.max().values[0] * 1.5],"k--", label="Primer año",alpha=0.7, linewidth=0.8)
 
         axl[0].set_title('Prediccion vs Realidad')
         axl[0].set_xlabel("Dias")
         axl[0].tick_params(axis='x', rotation=45)
         axl[0].set_ylabel("USD")
-        axl[0].set_ylim(self.data_test.min() * 0.9,self.data_test.max() * 1.5)
+        axl[0].set_ylim(self.data_test.min().values[0] * 0.9,self.data_test.max().values[0] * 1.5)
         try:
             axl[0].set_xlim(self.data_training.index[-252*3].date() , self.data_test.index[-1].date())
         except:
@@ -164,7 +165,7 @@ class MonteCarloSimulator:
 
         axl[2].axvline(x=p25[-1], color="r", linewidth=1.2, ls="--", label="Var 25%")
         axl[2].axvline(x=p75[-1], color="r", linewidth=1.2, ls="--")
-        axl[2].axvline(self.precio_inicial, color='black', linestyle='--', label='Precio actual')
+        axl[2].axvline(self.precio_inicial, color='black', linestyle='--', label='Precio inicial')
         axl[2].axvline(np.percentile(self.S_t[:, -1], 5), color='magenta', linestyle='--', label='VaR 95%')
 
         axl[2].set_title('Distribución de precio final')
@@ -178,7 +179,46 @@ class MonteCarloSimulator:
         )
         plt.savefig(f"Reporte Monte Carlo {self.modelo}.png")
 
-        #plt.show()
+        plt.close()
+        
+
+        
+        plt.plot(self.data_training, color = "blue",label="Data training",alpha=1.0)
+        plt.plot(self.data_test, color = "green",label="Data test",alpha=1.0)
+
+        #promedio de trayectorias
+        plt.fill_between(
+            self.data_test.reset_index().Date,
+            np.percentile(self.S_t, 5, axis=0),
+            np.percentile(self.S_t, 95, axis=0),
+            alpha=0.15,
+            color='magenta',
+            label='IC 90%',
+        )
+        plt.fill_between(
+            self.data_test.reset_index().Date,
+            p25,
+            p75,
+            alpha=0.25,
+            color='blue',
+            label='IC 50%',
+        )
+
+        plt.plot([self.data_test.index[252].date(),self.data_test.index[252].date()], [0,self.data_test.max().values[0] * 1.5],"k--", label="Primer año",alpha=0.7, linewidth=0.8)
+
+        plt.title('Prediccion vs Realidad')
+        plt.xlabel("Dias")
+        plt.tick_params(axis='x', rotation=45)
+        plt.ylabel("USD")
+        plt.ylim(self.data_test.min().values[0] * 0.9,self.data_test.max().values[0] * 1.5)
+        try:
+            plt.xlim(self.data_training.index[-252*3].date() , self.data_test.index[-1].date())
+        except:
+            plt.xlim(self.data_test.index[0].date() , self.data_test.index[-1].date())
+
+        plt.legend()
+        plt.savefig(f"Reporte Monte Carlo {self.modelo} Prediccion vs Realidad.png")
+        plt.close()
 
     def analisis_de_errores(self) -> str:
         #Percentiles

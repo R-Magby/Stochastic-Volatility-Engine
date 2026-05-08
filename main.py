@@ -3,6 +3,7 @@ Punto de entrada principal del proyecto de simulación Monte Carlo.
 Reproduce el flujo completo del notebook MC_Heston_BSM.ipynb.
 """
 
+from src import benchmark_simulaciones
 import numpy as np
 
 from src.logger import get_logger, log_parametros_simulacion, log_metricas_riesgo
@@ -40,7 +41,6 @@ def main() -> None:
     logger.info("Procesando y analizando datos...")
     try:
         datos = manipulate_data(df_sqm)
-        datos.informe()
         datos.informe_visual()
 
     except TypeError as e:
@@ -132,6 +132,7 @@ def main() -> None:
     logger.info("Generando reportes y gráficos...")
     try:
         dicc_err, msj_log = simulation.analisis_de_errores()
+        simulation.informe_visual()
         logger.info(msj_log)
 
 

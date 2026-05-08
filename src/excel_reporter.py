@@ -123,11 +123,16 @@ def generate_excel_report(
     ws1.cell(row=1,column=1).font = Font(bold=True, size=14)
 
     #columnas
-    ws1.cell(row=3,column=2, value="Modelo")
+    ws1.cell(row=3,column=2, value="Modelo")        
     ws1.cell(row=3,column=3,value ="Fecha")
     ws1.cell(row=3,column=4,value = "Ticker")
     ws1.cell(row=3,column=5,value = "N Simulaciones")
     ws1.cell(row=3,column=6,value = "MAE")
+    ws1.cell(row=3,column=7,value = "Coverage")
+    for idx_colum in range(2,8):
+        ws1.cell(row=3,column=idx_colum).border = border_thin
+        ws1.cell(row=3,column=idx_colum).font = Font(bold=True)
+        ws1.cell(row=3,column=idx_colum).fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
     
     #Valores
     ws1.cell(row=4, column=2, value = f"{params.get('modelo', 'N/A')}V1" )
@@ -135,23 +140,36 @@ def generate_excel_report(
     ws1.cell(row=4,column=4, value = f"{params.get('ticker', 'N/A')}" )
     ws1.cell(row=4,column=5,value = f"{params.get('n_simulaciones', 'N/A')}" )
     ws1.cell(row=4,column=6,value = f"{metrics.get('mae_price', 'N/A')}" )
+    ws1.cell(row=4,column=7, value = f"{metrics.get('coverage', 'N/A')}" )
 
     #Bordes
-    for col_idx in range(2,7):
+    for col_idx in range(2,8):
         ws1.cell(row=3, column=col_idx).border = border_thin
         ws1.cell(row=4, column=col_idx).border = border_thin
 
     #fondo de las columnas    
-    ws1.cell(row=3, column=1).fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
 
-    ws1.cell(row=3,column=2).font = Font(bold=True)
     
     # Adding the image
     img_path = f"Reporte Monte Carlo {params.get('modelo')}.png"
     if os.path.exists(img_path):
         try:
             img = OpenpyxlImage(img_path)
-            ws1.add_image(img, 'B5')
+ 
+            img.width = int(img.width * 0.7)
+            img.height = int(img.height * 0.7)
+            
+            # Insertar la primera imagen en B5
+            ws1.add_image(img, 'A9')
+            
+            # --- AGREGAR OTRA IMAGEN AL LADO ---
+            img2_path = "Reporte Visual del Activo.png" 
+            if os.path.exists(img2_path):
+                img2 = OpenpyxlImage(img2_path)
+                img2.width = int(img2.width * 0.5)
+                img2.height = int(img2.height * 0.5)
+                ws1.add_image(img2, 'M9')
+                
         except ImportError:
             logger.warning("Pillow no esta instalado. No se pudo insertar la imagen.")
             ws1.cell(row=6, column=2, value="Error: Pillow no esta instalado. Instale Pillow para ver la imagen.")
@@ -229,8 +247,7 @@ def generate_excel_report(
     # ==========================
     # HOJA 4 - Parametros
     # ==========================
-    ws4 = wb.active
-    ws4.title = "Parametros"
+    ws4 = wb.create_sheet(title = "Parametros")
 
     for row_idx, (key, value) in enumerate(params_data, start=1):
         ws4.cell(row=row_idx, column=1, value=key).font = Font(bold=True)
